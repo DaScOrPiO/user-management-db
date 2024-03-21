@@ -8,6 +8,7 @@ const multer = require("multer");
 const session = require("express-session");
 const authRoute = require("./routes/authentications/index");
 const User = require("./models/users");
+const cors = require("cors");
 
 const path = process.env.PORT || 3000;
 app.listen(path, () => {
@@ -28,6 +29,11 @@ mongoose.connection.on("error", (err) =>
   console.log("Error! Something went wrong", err)
 );
 
+const corsOptions = {
+  origin: "http://localhost:5173",
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

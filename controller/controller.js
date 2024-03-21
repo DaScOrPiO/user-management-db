@@ -10,7 +10,6 @@ module.exports.registerUser = async (req, res, next) => {
       lastname: item.lastname,
       username: item.username,
       email: item.email,
-      phone: item.phone,
     });
     await User.register(user, item.password);
     res.status(200).send("Successful");
@@ -46,12 +45,11 @@ module.exports.logout = async (req, res, next) => {
 
 module.exports.addUserDetails = async (req, res, next) => {
   try {
-    const { firstname, lastname, phone, email, dob } = req.body;
+    const { firstname, lastname, email, dob } = req.body;
     if (req.user) {
       const newDetails = new Details({
         firstname,
         lastname,
-        phone,
         email,
         dob,
         owner: req.user._id,
@@ -82,11 +80,11 @@ module.exports.getUserDetails = async (req, res, next) => {
 module.exports.updateUserDetails = async (req, res, next) => {
   try {
     if (req.user) {
-      const { firstname, lastname, phone, email, dob } = req.body;
+      const { firstname, lastname, email, dob } = req.body;
 
       const updatedDetails = await Details.findOneAndUpdate(
         { owner: req.user._id, email },
-        { firstname, lastname, phone, email, dob },
+        { firstname, lastname, email, dob },
         { new: true }
       );
 
