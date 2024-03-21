@@ -45,12 +45,13 @@ module.exports.logout = async (req, res, next) => {
 
 module.exports.addUserDetails = async (req, res, next) => {
   try {
-    const { firstname, lastname, email, dob } = req.body;
+    const { firstname, lastname, phone, email, dob } = req.body;
     if (req.user) {
       const newDetails = new Details({
         firstname,
         lastname,
         email,
+        phone,
         dob,
         owner: req.user._id,
       });
@@ -80,11 +81,11 @@ module.exports.getUserDetails = async (req, res, next) => {
 module.exports.updateUserDetails = async (req, res, next) => {
   try {
     if (req.user) {
-      const { firstname, lastname, email, dob } = req.body;
+      const { firstname, lastname, phone, email, dob } = req.body;
 
       const updatedDetails = await Details.findOneAndUpdate(
         { owner: req.user._id, email },
-        { firstname, lastname, email, dob },
+        { firstname, lastname, phone, email, dob },
         { new: true }
       );
 

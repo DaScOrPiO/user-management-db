@@ -9,6 +9,7 @@ const session = require("express-session");
 const authRoute = require("./routes/authentications/index");
 const User = require("./models/users");
 const cors = require("cors");
+const MongoStore = require("connect-mongo");
 
 const path = process.env.PORT || 3000;
 app.listen(path, () => {
@@ -31,17 +32,25 @@ mongoose.connection.on("error", (err) =>
 
 const corsOptions = {
   origin: "http://localhost:5173",
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const store = MongoStore.create({
+  mongoUrl: "mongodb://127.0.0.1:27017/user-management",
+  secret: "Thisisasecret",
+  touchAfter: 24 * 60 * 60,
+});
+
 app.use(
   session({
     secret: "secret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    store: store,
     cookie: {
       httpOnly: true,
       expires: Date.now() + 1000 * 60 * 60 * 12 * 2,
@@ -50,6 +59,10 @@ app.use(
     },
   })
 );
+
+store.on("error", function (e) {
+  console.log("Session error", e);
+});
 
 app.use(passport.initialize());
 app.use(passport.session());
